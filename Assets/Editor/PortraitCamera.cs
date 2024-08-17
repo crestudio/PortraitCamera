@@ -105,10 +105,8 @@ namespace com.vrsuya.portraitcamera {
 				Undo.RegisterCreatedObjectUndo(newGameObject, "Add New PortraitCamera");
 				EditorUtility.SetDirty(newCameraComponent);
 				SceneView.RepaintAll();
-				Debug.Log("Created");
 				return newCameraComponent;
 			} else {
-				Debug.Log("Not found VRC Avatar");
 				return null;
 			}
 		}
@@ -157,7 +155,6 @@ namespace com.vrsuya.portraitcamera {
 			if (SelectedGameObjects.Length == 1) {
 				VRC_AvatarDescriptor SelectedVRCAvatarDescriptor = SelectedGameObjects[0].GetComponent<VRC_AvatarDescriptor>();
 				if (SelectedVRCAvatarDescriptor) {
-					Debug.Log("Select : " + SelectedVRCAvatarDescriptor.gameObject.name);
 					return SelectedVRCAvatarDescriptor;
 				} else {
 					return null;
@@ -167,7 +164,6 @@ namespace com.vrsuya.portraitcamera {
 					.Where(SelectedGameObject => SelectedGameObject.activeInHierarchy == true)
 					.Select(SelectedGameObject => SelectedGameObject.GetComponent<VRC_AvatarDescriptor>()).ToArray()[0];
 				if (SelectedVRCAvatarDescriptor) {
-					Debug.Log("SelectMany : " + SelectedVRCAvatarDescriptor.gameObject.name);
 					return SelectedVRCAvatarDescriptor;
 				} else {
 					return null;
@@ -182,7 +178,6 @@ namespace com.vrsuya.portraitcamera {
 		private static VRC_AvatarDescriptor GetAvatarDescriptorFromVRCTool() {
 			VRC_AvatarDescriptor[] AllVRCAvatarDescriptor = VRC.Tools.FindSceneObjectsOfTypeAll<VRC_AvatarDescriptor>().ToArray();
 			if (AllVRCAvatarDescriptor.Length > 0) {
-				Debug.Log("VRCTool : " + AllVRCAvatarDescriptor.Where(Avatar => Avatar.gameObject.activeInHierarchy).ToArray()[0].gameObject.name);
 				return AllVRCAvatarDescriptor.Where(Avatar => Avatar.gameObject.activeInHierarchy).ToArray()[0];
 			} else {
 				return null;
