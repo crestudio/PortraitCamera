@@ -72,7 +72,7 @@ namespace com.vrsuya.portraitcamera {
 		}
 
 		/// <summary>지정된 색상으로 아바타 프로필용 카메라를 생성합니다.</summary>
-		private static void AddNewCamera(Color TargetColor) {
+		private static Camera AddNewCamera(Color TargetColor) {
 			GameObject newGameObject = new GameObject("PortraitCamera");
 			Camera newCameraComponent = newGameObject.AddComponent<Camera>();
 			newCameraComponent.clearFlags = CameraClearFlags.SolidColor;
@@ -85,7 +85,7 @@ namespace com.vrsuya.portraitcamera {
 			Undo.RegisterCreatedObjectUndo(newGameObject, "Add New PortraitCamera");
 			EditorUtility.SetDirty(newCameraComponent);
 			SceneView.RepaintAll();
-			return;
+			return newCameraComponent;
 		}
 
 		/// <summary>아바타의 뷰 포트를 기준으로 카메라의 위치를 반환합니다.</summary>
