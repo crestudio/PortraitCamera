@@ -91,58 +91,98 @@ namespace com.vrsuya.portraitcamera {
 
 		/// <summary>지정된 색상으로 아바타 프로필용 카메라를 생성합니다.</summary>
 		private static Camera AddNewCamera(Color TargetColor) {
-			GameObject newGameObject = new GameObject("PortraitCamera");
-			Camera newCameraComponent = newGameObject.AddComponent<Camera>();
-			newCameraComponent.clearFlags = CameraClearFlags.SolidColor;
-			newCameraComponent.backgroundColor = TargetColor;
-			newCameraComponent.fieldOfView = 1.0f;
-			newCameraComponent.nearClipPlane = 0.01f;
-			newCameraComponent.renderingPath = RenderingPath.Forward;
-			newGameObject.transform.position = GetCameraPosition();
-			newGameObject.transform.rotation = GetCameraRotation(newGameObject.transform.position);
-			Undo.RegisterCreatedObjectUndo(newGameObject, "Add New PortraitCamera");
-			EditorUtility.SetDirty(newCameraComponent);
-			SceneView.RepaintAll();
-			return newCameraComponent;
+			VRC_AvatarDescriptor TargetAvatarDescriptor = GetVRCAvatar();
+			if (TargetAvatarDescriptor) {
+				GameObject newGameObject = new GameObject("PortraitCamera");
+				Camera newCameraComponent = newGameObject.AddComponent<Camera>();
+				newCameraComponent.clearFlags = CameraClearFlags.SolidColor;
+				newCameraComponent.backgroundColor = TargetColor;
+				newCameraComponent.fieldOfView = 1.0f;
+				newCameraComponent.nearClipPlane = 0.01f;
+				newCameraComponent.renderingPath = RenderingPath.Forward;
+				newGameObject.transform.position = GetCameraPosition(TargetAvatarDescriptor);
+				newGameObject.transform.rotation = GetCameraRotation(newGameObject.transform.position, TargetAvatarDescriptor);
+				Undo.RegisterCreatedObjectUndo(newGameObject, "Add New PortraitCamera");
+				EditorUtility.SetDirty(newCameraComponent);
+				SceneView.RepaintAll();
+				Debug.Log("Created");
+				return newCameraComponent;
+			} else {
+				Debug.Log("Not found VRC Avatar");
+				return null;
+			}
 		}
 
 		/// <summary>아바타의 뷰 포트를 기준으로 카메라의 위치를 반환합니다.</summary>
 		/// <returns>최종 카메라의 벡터 좌표</returns>
-		private static Vector3 GetCameraPosition() {
+		private static Vector3 GetCameraPosition(VRC_AvatarDescriptor AvatarDescriptor) {
 			Vector3 newVector3 = new Vector3(0.0f, 1.2f, 13.5f);
 			Vector3 Offset = new Vector3(0.0f, -0.02f, 14.0f);
-			if (GetVRCAvatar()) {
-				VRC_AvatarDescriptor AvatarDescriptor = GetVRCAvatar();
-				Transform AvatarTransform = AvatarDescriptor.gameObject.transform;
-				Vector3 AvatarViewPosition = AvatarTransform.position + (AvatarTransform.rotation * AvatarDescriptor.ViewPosition);
-				newVector3 = AvatarViewPosition + (AvatarTransform.rotation * Offset);
-				return newVector3;
-			} else {
-				return newVector3;
-			}
+			Transform AvatarTransform = AvatarDescriptor.gameObject.transform;
+			Vector3 AvatarViewPosition = AvatarTransform.position + (AvatarTransform.rotation * AvatarDescriptor.ViewPosition);
+			newVector3 = AvatarViewPosition + (AvatarTransform.rotation * Offset);
+			return newVector3;
 		}
 
 		/// <summary>아바타를 기준으로 카메라의 회전을 반환합니다.</summary>
 		/// <returns>최종 카메라의 회전계</returns>
-		private static Quaternion GetCameraRotation(Vector3 CameraPosition) {
-			if (GetVRCAvatar()) {
-				VRC_AvatarDescriptor AvatarDescriptor = GetVRCAvatar();
-				Transform AvatarTransform = AvatarDescriptor.gameObject.transform;
-				Vector3 AvatarViewPosition = AvatarTransform.position + (AvatarTransform.rotation * AvatarDescriptor.ViewPosition);
-				Vector3 DirectionToAvatar = AvatarViewPosition - CameraPosition;
-				DirectionToAvatar.y = 0;
-				Vector3 FlattenedDirection = new Vector3(DirectionToAvatar.x, 0, DirectionToAvatar.z);
-				return Quaternion.LookRotation(FlattenedDirection);
+		private static Quaternion GetCameraRotation(Vector3 CameraPosition, VRC_AvatarDescriptor AvatarDescriptor) {
+			Transform AvatarTransform = AvatarDescriptor.gameObject.transform;
+			Vector3 AvatarViewPosition = AvatarTransform.position + (AvatarTransform.rotation * AvatarDescriptor.ViewPosition);
+			Vector3 DirectionToAvatar = AvatarViewPosition - CameraPosition;
+			DirectionToAvatar.y = 0;
+			Vector3 FlattenedDirection = new Vector3(DirectionToAvatar.x, 0, DirectionToAvatar.z);
+			return Quaternion.LookRotation(FlattenedDirection);
+		}
+
+		/// <summary>Scene에서 조건에 맞는 VRC AvatarDescriptor 컴포넌트 아바타 1개를 반환합니다.</summary>
+		/// <returns>조건에 맞는 VRC 아바타</returns>
+		private static VRC_AvatarDescriptor GetVRCAvatar() {
+			VRC_AvatarDescriptor TargetAvatarDescriptor = GetAvatarDescriptorFromVRCSDKBuilder();
+			if (!TargetAvatarDescriptor) GetAvatarDescriptorFromSelection();
+			if (!TargetAvatarDescriptor) GetAvatarDescriptorFromVRCTool();
+			return TargetAvatarDescriptor;
+		}
+
+		/// <summary>VRCSDK Builder에서 활성화 상태인 VRC 아바타를 반환합니다.</summary>
+		/// <returns>VRCSDK Builder에서 활성화 상태인 VRC 아바타</returns>
+		private static VRC_AvatarDescriptor GetAvatarDescriptorFromVRCSDKBuilder() {
+			return null;
+		}
+
+		/// <summary>Unity 하이어라키에서 선택한 GameObject 중에서 VRC AvatarDescriptor 컴포넌트가 존재하는 아바타를 1개를 반환합니다.</summary>
+		/// <returns>선택 중인 VRC 아바타</returns>
+		private static VRC_AvatarDescriptor GetAvatarDescriptorFromSelection() {
+			GameObject[] SelectedGameObjects = Selection.gameObjects;
+			if (SelectedGameObjects.Length == 1) {
+				VRC_AvatarDescriptor SelectedVRCAvatarDescriptor = SelectedGameObjects[0].GetComponent<VRC_AvatarDescriptor>();
+				if (SelectedVRCAvatarDescriptor) {
+					Debug.Log("Select : " + SelectedVRCAvatarDescriptor.gameObject.name);
+					return SelectedVRCAvatarDescriptor;
+				} else {
+					return null;
+				}
+			} else if (SelectedGameObjects.Length > 1) {
+				VRC_AvatarDescriptor SelectedVRCAvatarDescriptor = SelectedGameObjects
+					.Where(SelectedGameObject => SelectedGameObject.activeInHierarchy == true)
+					.Select(SelectedGameObject => SelectedGameObject.GetComponent<VRC_AvatarDescriptor>()).ToArray()[0];
+				if (SelectedVRCAvatarDescriptor) {
+					Debug.Log("SelectMany : " + SelectedVRCAvatarDescriptor.gameObject.name);
+					return SelectedVRCAvatarDescriptor;
+				} else {
+					return null;
+				}
 			} else {
-				return Quaternion.Euler(0, 180, 0);
+				return null;
 			}
 		}
 
-		/// <summary>Scene에서 활성화 상태인 VRC AvatarDescriptor 컴포넌트를 가지고 있는 아바타 1개를 반환합니다.</summary>
-		/// <returns>활성화 상태인 VRC 아바타</returns>
-		private static VRC_AvatarDescriptor GetVRCAvatar() {
+		/// <summary>Scene에서 활성화 상태인 VRC AvatarDescriptor 컴포넌트가 존재하는 아바타를 1개를 반환합니다.</summary>
+		/// <returns>Scene에서 활성화 상태인 VRC 아바타</returns>
+		private static VRC_AvatarDescriptor GetAvatarDescriptorFromVRCTool() {
 			VRC_AvatarDescriptor[] AllVRCAvatarDescriptor = VRC.Tools.FindSceneObjectsOfTypeAll<VRC_AvatarDescriptor>().ToArray();
 			if (AllVRCAvatarDescriptor.Length > 0) {
+				Debug.Log("VRCTool : " + AllVRCAvatarDescriptor.Where(Avatar => Avatar.gameObject.activeInHierarchy).ToArray()[0].gameObject.name);
 				return AllVRCAvatarDescriptor.Where(Avatar => Avatar.gameObject.activeInHierarchy).ToArray()[0];
 			} else {
 				return null;
