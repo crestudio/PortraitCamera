@@ -101,7 +101,7 @@ namespace com.vrsuya.portraitcamera {
 				newCameraComponent.nearClipPlane = 0.01f;
 				newCameraComponent.renderingPath = RenderingPath.Forward;
 				newGameObject.transform.position = GetCameraPosition(TargetAvatarDescriptor);
-				newGameObject.transform.rotation = GetCameraRotation(newGameObject.transform.position, TargetAvatarDescriptor);
+				newGameObject.transform.rotation = GetCameraRotation(TargetAvatarDescriptor);
 				Undo.RegisterCreatedObjectUndo(newGameObject, "Add New PortraitCamera");
 				EditorUtility.SetDirty(newCameraComponent);
 				SceneView.RepaintAll();
@@ -124,13 +124,11 @@ namespace com.vrsuya.portraitcamera {
 
 		/// <summary>아바타를 기준으로 카메라의 회전을 반환합니다.</summary>
 		/// <returns>최종 카메라의 회전계</returns>
-		private static Quaternion GetCameraRotation(Vector3 CameraPosition, VRC_AvatarDescriptor AvatarDescriptor) {
-			Transform AvatarTransform = AvatarDescriptor.gameObject.transform;
-			Vector3 AvatarViewPosition = AvatarTransform.position + (AvatarTransform.rotation * AvatarDescriptor.ViewPosition);
-			Vector3 DirectionToAvatar = AvatarViewPosition - CameraPosition;
-			DirectionToAvatar.y = 0;
-			Vector3 FlattenedDirection = new Vector3(DirectionToAvatar.x, 0, DirectionToAvatar.z);
-			return Quaternion.LookRotation(FlattenedDirection);
+		private static Quaternion GetCameraRotation(VRC_AvatarDescriptor AvatarDescriptor) {
+			Quaternion AvatarRotation = AvatarDescriptor.gameObject.transform.rotation;
+			Quaternion ReferenceRotation = Quaternion.Euler(0, 180, 0);
+			Quaternion RotationDifference = AvatarRotation * Quaternion.Inverse(ReferenceRotation);
+			return RotationDifference;
 		}
 
 		/// <summary>Scene에서 조건에 맞는 VRC AvatarDescriptor 컴포넌트 아바타 1개를 반환합니다.</summary>
