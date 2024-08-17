@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using System.Linq;
 
 using UnityEditor;
@@ -15,59 +16,76 @@ namespace com.vrsuya.portraitcamera {
 
 	public class PortraitCamera : MonoBehaviour {
 
+		private enum ColorType {
+			Levin, Macchiato,
+			White, Gray, Black,
+			Red, Green, Blue
+		};
+
+		private static Dictionary<ColorType, Color> DictionaryColor = new Dictionary<ColorType, Color>() {
+			{ ColorType.Levin, new Color(0.149f, 0.749f, 0.733f) },
+			{ ColorType.Macchiato, new Color(0.749f, 0.0f, 0.0f) },
+			{ ColorType.White, new Color(1.0f, 1.0f, 1.0f) },
+			{ ColorType.Gray, new Color(0.5f, 0.5f, 0.5f) },
+			{ ColorType.Black, new Color(0.0f, 0.0f, 0.0f) },
+			{ ColorType.Red, new Color(1.0f, 0.0f, 0.0f) },
+			{ ColorType.Green, new Color(0.0f, 1.0f, 0.0f) },
+			{ ColorType.Blue, new Color(0.0f, 0.0f, 1.0f) }
+		};
+
 		/// <summary>마끼아또 아바타 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/Macchiato", priority = 1100)]
 		public static void AddMacchaitoCamera() {
-			AddNewCamera(new Color(0.749f, 0.0f, 0.0f));
+			AddNewCamera(DictionaryColor[ColorType.Macchiato]);
 			return;
 		}
 
 		/// <summary>레빈 아바타 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/Levin", priority = 1101)]
 		public static void AddLevinCamera() {
-			AddNewCamera(new Color(0.149f, 0.749f, 0.733f));
+			AddNewCamera(DictionaryColor[ColorType.Levin]);
 			return;
 		}
 
 		/// <summary>흰색 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/White", priority = 1200)]
 		public static void AddWhiteCamera() {
-			AddNewCamera(new Color(1.0f, 1.0f, 1.0f));
+			AddNewCamera(DictionaryColor[ColorType.White]);
 			return;
 		}
 
 		/// <summary>검은색 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/Black", priority = 1201)]
 		public static void AddBlackCamera() {
-			AddNewCamera(new Color(0.0f, 0.0f, 0.0f));
+			AddNewCamera(DictionaryColor[ColorType.Black]);
 			return;
 		}
 
 		/// <summary>회색 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/Gray", priority = 1202)]
 		public static void AddGrayCamera() {
-			AddNewCamera(new Color(0.5f, 0.5f, 0.5f));
+			AddNewCamera(DictionaryColor[ColorType.Gray]);
 			return;
 		}
 
 		/// <summary>빨간색 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/Red", priority = 1300)]
 		public static void AddRedCamera() {
-			AddNewCamera(new Color(1.0f, 0.0f, 0.0f));
+			AddNewCamera(DictionaryColor[ColorType.Red]);
 			return;
 		}
 
 		/// <summary>초록색 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/Green", priority = 1301)]
 		public static void AddGreenCamera() {
-			AddNewCamera(new Color(0.0f, 1.0f, 0.0f));
+			AddNewCamera(DictionaryColor[ColorType.Green]);
 			return;
 		}
 
 		/// <summary>파란색 프로필용 카메라를 생성합니다.</summary>
 		[MenuItem("Tools/VRSuya/PortraitCamera/Blue", priority = 1302)]
 		public static void AddBlueCamera() {
-			AddNewCamera(new Color(0.0f, 0.0f, 1.0f));
+			AddNewCamera(DictionaryColor[ColorType.Blue]);
 			return;
 		}
 
