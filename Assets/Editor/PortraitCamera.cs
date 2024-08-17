@@ -139,8 +139,8 @@ namespace com.vrsuya.portraitcamera {
 		/// <returns>조건에 맞는 VRC 아바타</returns>
 		private static VRC_AvatarDescriptor GetVRCAvatar() {
 			VRC_AvatarDescriptor TargetAvatarDescriptor = GetAvatarDescriptorFromVRCSDKBuilder();
-			if (!TargetAvatarDescriptor) GetAvatarDescriptorFromSelection();
-			if (!TargetAvatarDescriptor) GetAvatarDescriptorFromVRCTool();
+			if (!TargetAvatarDescriptor) TargetAvatarDescriptor = GetAvatarDescriptorFromSelection();
+			if (!TargetAvatarDescriptor) TargetAvatarDescriptor = GetAvatarDescriptorFromVRCTool();
 			return TargetAvatarDescriptor;
 		}
 
