@@ -335,13 +335,11 @@ namespace com.vrsuya.portraitcamera {
 		/// <returns>변환된 Color 객체</returns>
 		private static Color HexToColor(string HEXColorCode) {
 			if (HEXColorCode.StartsWith("#")) HEXColorCode = HEXColorCode.Substring(1);
-			if (HEXColorCode.Length != 6 && HEXColorCode.Length != 8) return Color.black;
-			if (HEXColorCode.Length == 6) HEXColorCode += "FF";
-			byte r = byte.Parse(HEXColorCode.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-			byte g = byte.Parse(HEXColorCode.Substring(2, 4).Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-			byte b = byte.Parse(HEXColorCode.Substring(4, 6).Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-			byte a = byte.Parse(HEXColorCode.Substring(6, 8).Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-			return new Color32(r, g, b, a);
+			if (HEXColorCode.Length != 6 ) return Color.black;
+			float r = int.Parse(HEXColorCode.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+			float g = int.Parse(HEXColorCode.Substring(2, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+			float b = int.Parse(HEXColorCode.Substring(4, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
+			return new Color(r, g, b);
 		}
 	}
 }
