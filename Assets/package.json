@@ -4,9 +4,9 @@
   "displayName": "VRSuya - PortraitCamera",
   "description": "VRChat Avatar Thumbnail Camera",
   "unity": "2019.4",
-  "documentationUrl": "https://github.com/crestudio/PortraitCamera/blob/master/README.md",
-  "changelogUrl": "https://github.com/crestudio/PortraitCamera/blob/master/README.md",
-  "licensesUrl": "https://github.com/crestudio/PortraitCamera/blob/master/LICENSE",
+  "documentationUrl": "https://github.com/crestudio/PortraitCamera/blob/main/README.md",
+  "changelogUrl": "https://github.com/crestudio/PortraitCamera/blob/main/README.md",
+  "licensesUrl": "https://github.com/crestudio/PortraitCamera/blob/main/LICENSE",
   "keywords": [
     "VRSuya",
     "VRChat"

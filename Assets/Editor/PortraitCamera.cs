@@ -182,7 +182,7 @@ namespace com.vrsuya.portraitcamera {
 		}
 
 		/// <summary>SpringBlossom 프로필용 카메라를 생성합니다.</summary>
-		[MenuItem("Tools/VRSuya/PortraitCamera/SpringBlossom", priority = 1313)]
+		[MenuItem("Tools/VRSuya/PortraitCamera/Spring Blossom", priority = 1313)]
 		public static void AddSpringBlossomCamera() {
 			AddNewCamera(DictionaryColor[ColorType.SpringBlossom]);
 			return;
@@ -331,7 +331,7 @@ namespace com.vrsuya.portraitcamera {
 		}
 
 		/// <summary>HEX 문자열을 Color로 변환합니다.</summary>
-		/// <param name="HEXColorCode">변환할 HEX 문자열 (예: #RRGGBB 또는 #RRGGBBAA)</param>
+		/// <param name="HEXColorCode">변환할 HEX 문자열 (예: #RRGGBB)</param>
 		/// <returns>변환된 Color 객체</returns>
 		private static Color HexToColor(string HEXColorCode) {
 			if (HEXColorCode.StartsWith("#")) HEXColorCode = HEXColorCode.Substring(1);
