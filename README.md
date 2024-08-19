@@ -21,6 +21,7 @@ VRChat 아바타 썸네일 카메라 자동 생성 스크립트
 1. 사용 중인 Unity 프로젝트에 해당 패키지를 임포트합니다
 1. VRCSDK 패널에서 Capture From Scene 를 누릅니다
 1. Unity 메뉴 **Tools → VRSuya → PortraitCamera → 원하는 색상**을 선택합니다
+1. **Custom Camera에 생성된 카메라**를 넣습니다
 1. Capture 버튼을 눌러 촬영합니다
 
 ---
