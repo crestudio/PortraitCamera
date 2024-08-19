@@ -22,15 +22,15 @@ namespace com.vrsuya.portraitcamera {
 			Red, Green, Blue
 		};
 
-		private static Dictionary<ColorType, Color> DictionaryColor = new Dictionary<ColorType, Color>() {
-			{ ColorType.Levin, new Color(0.149f, 0.749f, 0.733f) },
-			{ ColorType.Macchiato, new Color(0.749f, 0.0f, 0.0f) },
-			{ ColorType.White, new Color(1.0f, 1.0f, 1.0f) },
-			{ ColorType.Gray, new Color(0.5f, 0.5f, 0.5f) },
-			{ ColorType.Black, new Color(0.0f, 0.0f, 0.0f) },
-			{ ColorType.Red, new Color(1.0f, 0.0f, 0.0f) },
-			{ ColorType.Green, new Color(0.0f, 1.0f, 0.0f) },
-			{ ColorType.Blue, new Color(0.0f, 0.0f, 1.0f) }
+		private static Dictionary<ColorType, string> DictionaryColor = new Dictionary<ColorType, string>() {
+			{ ColorType.Levin, "#26BFBB" },
+			{ ColorType.Macchiato, "#BF0000" },
+			{ ColorType.White, "#FFFFFF" },
+			{ ColorType.Gray, "#808080" },
+			{ ColorType.Black, "#000000" },
+			{ ColorType.Red, "#FF0000" },
+			{ ColorType.Green, "#00FF00" },
+			{ ColorType.Blue, "#0000FF" }
 		};
 
 		/// <summary>마끼아또 아바타 프로필용 카메라를 생성합니다.</summary>
@@ -90,13 +90,13 @@ namespace com.vrsuya.portraitcamera {
 		}
 
 		/// <summary>지정된 색상으로 아바타 프로필용 카메라를 생성합니다.</summary>
-		private static Camera AddNewCamera(Color TargetColor) {
+		private static Camera AddNewCamera(string HEXColorCode) {
 			VRC_AvatarDescriptor TargetAvatarDescriptor = GetVRCAvatar();
 			if (TargetAvatarDescriptor) {
 				GameObject newGameObject = new GameObject("PortraitCamera");
 				Camera newCameraComponent = newGameObject.AddComponent<Camera>();
 				newCameraComponent.clearFlags = CameraClearFlags.SolidColor;
-				newCameraComponent.backgroundColor = TargetColor;
+				newCameraComponent.backgroundColor = HexToColor(HEXColorCode);
 				newCameraComponent.fieldOfView = 1.0f;
 				newCameraComponent.nearClipPlane = 0.01f;
 				newCameraComponent.renderingPath = RenderingPath.Forward;
@@ -180,6 +180,20 @@ namespace com.vrsuya.portraitcamera {
 			} else {
 				return null;
 			}
+		}
+
+		/// <summary>HEX 문자열을 Color로 변환합니다.</summary>
+		/// <param name="HEXColorCode">변환할 HEX 문자열 (예: #RRGGBB 또는 #RRGGBBAA)</param>
+		/// <returns>변환된 Color 객체</returns>
+		private static Color HexToColor(string HEXColorCode) {
+			if (HEXColorCode.StartsWith("#")) HEXColorCode = HEXColorCode.Substring(1);
+			if (HEXColorCode.Length != 6 && HEXColorCode.Length != 8) return Color.black;
+			if (HEXColorCode.Length == 6) HEXColorCode += "FF";
+			byte r = byte.Parse(HEXColorCode.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+			byte g = byte.Parse(HEXColorCode.Substring(2, 4).Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+			byte b = byte.Parse(HEXColorCode.Substring(4, 6).Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+			byte a = byte.Parse(HEXColorCode.Substring(6, 8).Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+			return new Color32(r, g, b, a);
 		}
 	}
 }
