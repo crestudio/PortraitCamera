@@ -1,9 +1,11 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 using VRC.SDKBase;
 
@@ -253,6 +255,7 @@ namespace com.vrsuya.portraitcamera {
 				Undo.RegisterCreatedObjectUndo(newGameObject, "Add New PortraitCamera");
 				EditorUtility.SetDirty(newCameraComponent);
 				SceneView.RepaintAll();
+				ApplyCustomCameraSettings(newCameraComponent);
 				return newCameraComponent;
 			} else {
 				return null;
@@ -340,6 +343,44 @@ namespace com.vrsuya.portraitcamera {
 			float g = int.Parse(HEXColorCode.Substring(2, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
 			float b = int.Parse(HEXColorCode.Substring(4, 2), System.Globalization.NumberStyles.HexNumber) / 255f;
 			return new Color(r, g, b);
+		}
+
+		private static void ApplyCustomCameraSettings(Camera TargetCamera) {
+			VisualElement VRCSdkControlPanel = FindVRCSdkControlPanel();
+			if (VRCSdkControlPanel == null) {
+				Debug.Log("No VRCSdkControlPanel");
+				return;
+			}
+			VisualElement ThumbnailFoldout = FindThumbnailFoldout(VRCSdkControlPanel);
+			if (ThumbnailFoldout == null) {
+				Debug.Log("No ThumbnailFoldout");
+				return;
+			}
+			SetPrivateField(ThumbnailFoldout, "_useCustomCamera", true);
+			SetPrivateField(ThumbnailFoldout, "_customCamera", TargetCamera);
+		}
+
+		private static VisualElement FindVRCSdkControlPanel() {
+			EditorWindow[] AllWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+			foreach (EditorWindow CurrentWindow in AllWindows) {
+				if (CurrentWindow.GetType().Name == "VRCSdkControlPanel") {
+					return CurrentWindow.rootVisualElement;
+				}
+			}
+			return null;
+		}
+
+		private static VisualElement FindThumbnailFoldout(VisualElement TargetVisualElement) {
+			return TargetVisualElement.Q<VisualElement>(null, "ThumbnailFoldout");
+		}
+
+		private static void SetPrivateField<T>(object TargetObject, string TargetFieldName, T TargetValue) {
+			FieldInfo TargetFieldInfo = TargetObject.GetType().GetField(TargetFieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+			if (TargetFieldInfo != null) {
+				TargetFieldInfo.SetValue(TargetObject, TargetValue);
+			} else {
+				Debug.Log("No " + TargetFieldName);
+			}
 		}
 	}
 }
